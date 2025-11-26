@@ -1,0 +1,3 @@
+[submodule "OlivOS"]
+	path = OlivOS
+	url = https://github.com/OlivOS-Team/OlivOS
