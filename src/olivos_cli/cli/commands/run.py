@@ -29,8 +29,26 @@ def cmd_run(config_manager: ConfigManager, args) -> int:
 
     logger.step(f"启动 OlivOS: {main_py}")
 
-    # 构建 Python 命令
-    cmd = [sys.executable, str(main_py)]
+    # 检查是否存在虚拟环境
+    VENV_DIR = ".venv"
+    venv_path = install_path / VENV_DIR
+    if venv_path.exists():
+        # Windows: venv_path / "Scripts" / "python.exe"
+        # Linux/Mac: venv_path / "bin" / "python"
+        if sys.platform == "win32":
+            python_bin = venv_path / "Scripts" / "python.exe"
+        else:
+            python_bin = venv_path / "bin" / "python"
+
+        if python_bin.exists():
+            logger.info_print(f"使用虚拟环境 Python: {python_bin}")
+            cmd = [str(python_bin), str(main_py)]
+        else:
+            logger.warning_print(f"虚拟环境 Python 不存在: {python_bin}")
+            cmd = [sys.executable, str(main_py)]
+    else:
+        logger.info_print("未检测到虚拟环境，使用系统 Python")
+        cmd = [sys.executable, str(main_py)]
 
     # 添加环境变量
     env = {"PYTHONUNBUFFERED": "1"}
