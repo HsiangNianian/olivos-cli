@@ -1,0 +1,44 @@
+# systemd service 模板
+# 由 OlivOS-CLI 生成
+
+[Unit]
+Description={{ description }}
+Documentation=https://github.com/OlivOS-Team/OlivOS
+After=network.target
+{% if depends_on_services %}Requires={{ depends_on_services | join(' ') }}{% endif %}
+
+[Service]
+Type=simple
+User={{ user }}
+Group={{ group }}
+WorkingDirectory={{ working_directory }}
+
+# 环境变量
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+{% for key, value in environment.items() %}Environment="{{ key }}={{ value }}"
+{% endfor %}
+
+# 启动命令
+ExecStart={{ python_executable }} {{ main_script }}
+
+# 重启策略
+Restart={{ restart_policy }}
+RestartSec={{ restart_sec }}
+
+# 安全限制
+RestrictAddressFamilies={{ restrict_address_families | join(' ') }}
+PrivateTmp={{ "true" if private_tmp else "false" }}
+NoNewPrivileges={{ "true" if no_new_privileges else "false" }}
+{% if memory_limit %}MemoryLimit={{ memory_limit }}{% endif %}
+{% if cpu_quota %}CPUQuota={{ cpu_quota }}{% endif %}
+
+# 日志
+StandardOutput=append:{{ log_file }}
+StandardError=append:{{ error_log_file }}
+
+# 超时
+TimeoutStartSec={{ timeout_start_sec }}
+TimeoutStopSec={{ timeout_stop_sec }}
+
+[Install]
+WantedBy={{ wanted_by }}
