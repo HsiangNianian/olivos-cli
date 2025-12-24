@@ -448,7 +448,7 @@ olivos-cli update
 
 ---
 
-## ⚙️ 配置文件
+## 配置文件
 
 配置文件位于 `~/.config/olivos-cli/config.toml`：
 
