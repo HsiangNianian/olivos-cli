@@ -5,7 +5,6 @@ account 命令实现
 
 from ...core import (
     ADAPTER_GROUPS,
-    get_adapter_by_platform_sdk,
     get_adapter_config,
     get_adapter_extends_options,
     get_adapter_model_type_options,
@@ -650,52 +649,52 @@ def _print_platform_tips(platform: str):
     """打印平台的配置提示信息"""
     tips = {
         "telegram": [
-            "💡 Telegram 配置提示：",
+            "Telegram 配置提示：",
             "  • 账号 ID：机器人的用户名或数字 ID",
             "  • Bot Token：通过 @Botfather 创建机器人时获得",
             "  • 格式示例：123456789:AAH4XXX..."
         ],
         "qqGuild": [
-            "💡 QQ 频道配置提示：",
+            "QQ 频道配置提示：",
             "  • 账号 ID：频道的 ID",
             "  • 访问令牌：从 QQ 频道开放平台获取"
         ],
         "discord": [
-            "💡 Discord 配置提示：",
+            "Discord 配置提示：",
             "  • 账号 ID：机器人的客户端 ID（可选）",
             "  • 访问令牌：从 Discord 开发者平台获取"
         ],
         "kaiheila": [
-            "💡 KOOK 配置提示：",
+            "KOOK 配置提示：",
             "  • 访问令牌：从 KOOK 开放平台获取"
         ],
         "biliLive": [
-            "💡 B站直播间配置提示：",
+            "B站直播间配置提示：",
             "  • 访问令牌：登录模式需要，从 B站获取"
         ],
         "mhyVila": [
-            "💡 米游社大别野配置提示：",
+            "米游社大别野配置提示：",
             "  • 账号 ID：用户 ID",
             "  • 密码：用户密码",
             "  • 访问令牌：从米游社获取"
         ],
         "dodo": [
-            "💡 Dodo 配置提示：",
+            "Dodo 配置提示：",
             "  • 账号 ID：Bot ID",
             "  • 访问令牌：从 Dodo 开放平台获取"
         ],
         "fanbook": [
-            "💡 Fanbook 配置提示：",
+            "Fanbook 配置提示：",
             "  • 访问令牌：从 Fanbook 开放平台获取"
         ],
         "hackChat": [
-            "💡 Hack.Chat 配置提示：",
+            "Hack.Chat 配置提示：",
             "  • 账号 ID：房间名称",
             "  • Bot 名称：机器人的名称",
             "  • 访问令牌：Bot 名称（再次输入）"
         ],
         "xiaoheihe": [
-            "💡 小黑盒配置提示：",
+            "小黑盒配置提示：",
             "  • 访问令牌：从小黑盒开放平台获取"
         ]
     }

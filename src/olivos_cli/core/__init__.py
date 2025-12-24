@@ -86,6 +86,7 @@ __all__ = [
     # adapters
     "ADAPTER_GROUPS",
     "ALL_ADAPTERS",
+    "get_adapter_by_platform_sdk",
     "get_adapter_config",
     "list_adapter_configs",
     # validation
@@ -130,4 +131,7 @@ def __getattr__(name: str):
     elif name == "get_adapter_extends_options":
         from .validation import get_adapter_extends_options
         return get_adapter_extends_options
+    elif name == "get_adapter_by_platform_sdk":
+        from .adapters import get_adapter_by_platform_sdk
+        return get_adapter_by_platform_sdk
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
