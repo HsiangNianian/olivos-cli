@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-UV 包���理器实现
+UV 包管理器实现
 """
 
 import shutil
