@@ -53,8 +53,7 @@ def _cmd_config_show(config_manager: ConfigManager) -> int:
 
     config = config_manager.config
     data = asdict(config)
-
-    # 使用 rich 打印
+
     import json
     from rich.console import Console
     from rich.syntax import Syntax
