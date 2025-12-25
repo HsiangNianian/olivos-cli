@@ -70,8 +70,7 @@ class OlivOSAccountAPI:
         """解析 accountTypeMappingList"""
         if self._account_type_mapping is not None:
             return self._account_type_mapping
-
-        # 使用更强大的方法提取 accountTypeMappingList
+
         # 找到 accountTypeMappingList = { 的位置
         start_marker = "accountTypeMappingList = {"
         start_idx = content.find(start_marker)
@@ -128,17 +127,16 @@ class OlivOSAccountAPI:
         if self._adapter_types is not None:
             return self._adapter_types
 
-        # 使用更强大的方法提取 accountTypeDataList_platform_sdk_model
+        # 提取 accountTypeDataList_platform_sdk_model
         start_marker = "accountTypeDataList_platform_sdk_model = {"
         start_idx = content.find(start_marker)
         if start_idx == -1:
             logger.warning_print("未找到 accountTypeDataList_platform_sdk_model")
             return {}
-
-        # 从起始位置开始，手动匹配花括号
+
         brace_count = 0
         in_dict = False
-        end_idx = start_idx + len(start_marker) - 1  # 包含起始的 {
+        end_idx = start_idx + len(start_marker) - 1
 
         for i in range(start_idx + len(start_marker) - 1, len(content)):
             if content[i] == '{':
