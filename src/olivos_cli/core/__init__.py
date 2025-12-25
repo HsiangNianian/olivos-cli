@@ -40,9 +40,9 @@ from .logger import OlivOSLogger, get_logger
 def get_version() -> str:
     """动态获取包版本"""
     try:
-        return version("olivos-cli")
+        return version("olivos_cli")
     except Exception:
-        return "0.0.0"
+        return "builtin"
 
 
 VERSION = get_version()
