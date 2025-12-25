@@ -99,7 +99,6 @@ __all__ = [
 ]
 
 
-# Lazy imports for larger modules
 def __getattr__(name: str):
     if name == "ADAPTER_GROUPS":
         from .adapters import ADAPTER_GROUPS
