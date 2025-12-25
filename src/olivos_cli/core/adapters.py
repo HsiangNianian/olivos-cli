@@ -51,14 +51,9 @@ class AdapterConfig:
     description: str = ""
 
     # 帮助信息
-    help_text: str = ""
+    help_text: str = ""
 
-
-# =============================================================================
-# OlivOS 16 个实际适配器模块
-# =============================================================================
-
-# 1. onebotV11 - QQ 平台 (包含多种实现)
+# 1. onebotV11 - QQ 平台
 ONEBOTV11_MODEL_TYPES = {
     "default": "默认模式",
     "napcat": "NapCat",
@@ -181,15 +176,10 @@ VIRTUAL_TERMINAL_MODEL_TYPES = {
     "default": "虚拟终端",
     "postapi": "HTTP 接口终端",
     "ff14": "FF14 终端",
-}
-
-
-# =============================================================================
-# 适配器模块定义 (16 个)
-# =============================================================================
+}
 
 ALL_ADAPTERS: dict[str, AdapterConfig] = {
-    # 1. onebotV11 - QQ 平台 (支持多种 OneBot 11 实现)
+    # 1. onebotV11 - QQ 平台
     "onebotV11": AdapterConfig(
         name="OneBot V11 (QQ)",
         key="onebotV11",
@@ -457,12 +447,7 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="虚拟聊天终端",
         help_text="用于插件调试和测试",
     ),
-}
-
-
-# =============================================================================
-# 适配器分组（用于显示）
-# =============================================================================
+}
 
 ADAPTER_GROUPS: dict[str, list[str]] = {
     "QQ 平台": ["onebotV11", "onebotV12", "qqGuild", "qqGuildV2", "OPQBot", "red"],
