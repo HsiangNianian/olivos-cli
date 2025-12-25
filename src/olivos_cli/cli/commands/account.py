@@ -420,7 +420,7 @@ def _interactive_select_adapter() -> str | None:
         logger.error_print("没有可用适配器")
         return None
 
-    # 选择具体适���器
+    # 选择具体适配器
     adapter_choices = []
     for key, cfg in adapters:
         desc = f"{cfg.name}"
@@ -592,8 +592,7 @@ def _collect_extends_info(adapter, args) -> dict:
 def _cmd_account_remove(config: OlivOSConfigManager, args) -> int:
     """删除账号"""
     account_id = args.account_id
-
-    # 确认
+
     if not confirm(f"确定要删除账号 {account_id} 吗？"):
         return 0
 
