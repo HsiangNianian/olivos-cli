@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 配置管理模块
-处理 TOML 格��的配置文件读写
+处理 TOML 配置文件读写
 """
 
 import os
@@ -9,8 +9,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
-
-# Python 3.11+ 有标准库 tomllib，否则使用 tomli
+
 if sys.version_info >= (3, 11):
     import tomllib
 else:
@@ -426,7 +425,7 @@ class ConfigManager:
             raise ConfigError(f"保存配置文件失败: {e}") from e
 
     def _dict_to_toml(self, data: dict, indent: int = 0) -> str:
-        """简单的字典转 TOML (回退方案)"""
+        """字典转 TOML (回退方案)"""
         lines = []
         prefix = " " * indent
 
