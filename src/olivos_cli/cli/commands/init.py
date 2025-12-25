@@ -383,7 +383,7 @@ def _run_command_limited(cmd, cwd: str, max_lines: int = 4) -> int:
         if line:
             output_buffer.append(line)
             # 清除并重新打印
-            sys.stdout.write("\r\033[K")  # 清除当前行
+            sys.stdout.write("\r\033[K")
             if len(output_buffer) > 0:
                 sys.stdout.write(f"\033[{len(output_buffer)}F")
             for buffered_line in output_buffer:
@@ -392,6 +392,6 @@ def _run_command_limited(cmd, cwd: str, max_lines: int = 4) -> int:
             sys.stdout.flush()
 
     returncode = process.wait()
-    print()  # 换行
+    print()
 
     return returncode
