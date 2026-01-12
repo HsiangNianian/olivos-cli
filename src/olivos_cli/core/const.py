@@ -11,25 +11,27 @@ IS_WINDOWS = sys.platform == "win32"
 if IS_WINDOWS:
     _app_data = os.getenv("LOCALAPPDATA")
     if not _app_data:
-        _app_data = os.path.expanduser(os.path.join("~", "AppData", "Local"))
-
-    _base_dir = os.path.join(_app_data, "olivos-cli")
-
-    CONFIG_DIR = os.path.join(_base_dir, "config")
-    DATA_DIR = os.path.join(_base_dir, "data")
-    CACHE_DIR = os.path.join(_base_dir, "cache")
-    LOG_DIR = os.path.join(_base_dir, "log")
-
+        _app_data = Path.home() / "AppData" / "Local"
+    else:
+        _app_data = Path(_app_data)
+    
+    _base_dir = _app_data / "olivos-cli"
+    
+    CONFIG_DIR = _base_dir / "config"
+    DATA_DIR = _base_dir / "data"
+    CACHE_DIR = _base_dir / "cache"
+    LOG_DIR = _base_dir / "log"
+    
     # Windows 下 systemd 用户目录无意义，设为用户主目录
     SYSTEMD_USER_DIR = Path.home()
 else:
-    CONFIG_DIR = os.path.join(Path.home(), ".config", "olivos-cli")
-    DATA_DIR = os.path.join(Path.home(), ".local", "share", "olivos-cli")
-    CACHE_DIR = os.path.join(Path.home(), ".cache", "olivos-cli")
-    LOG_DIR = os.path.join(Path.home(), ".local", "state", "olivos-cli")
-    SYSTEMD_USER_DIR = os.path.join(Path.home(), ".config", "systemd", "user")
+    CONFIG_DIR = Path.home() / ".config" / "olivos-cli"
+    DATA_DIR = Path.home() / ".local" / "share" / "olivos-cli"
+    CACHE_DIR = Path.home() / ".cache" / "olivos-cli"
+    LOG_DIR = Path.home() / ".local" / "state" / "olivos-cli"
+    SYSTEMD_USER_DIR = Path.home() / ".config" / "systemd" / "user"
 
-CONFIG_FILE = os.path.join(CONFIG_DIR, "config.toml")
+CONFIG_FILE = CONFIG_DIR / "config.toml"
 DEFAULT_SERVICE_NAME = "olivos-cli"
 DEFAULT_BRANCH = "main"
 DEFAULT_MIRROR_URL = "https://ghproxy.hydroroll.team"
