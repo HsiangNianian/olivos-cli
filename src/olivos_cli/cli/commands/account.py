@@ -561,15 +561,18 @@ def _collect_server_info(adapter, args) -> AccountServer:
         # 如果是手动模式（原生或用户切换），允许选择连接类型
         if not server_auto:
             type_choices = ["post", "websocket", "reverse_websocket"]
-            default_idx = 0
-            if server_type in type_choices:
-                default_idx = type_choices.index(server_type)
 
-            default_type = type_choices[default_idx]
-            prompt = f"选择连接类型 (默认: {default_type})"
-            # 只有当用户没有显式指定 --server-type (如果支持该参数) 时才询问
-            # 目前 CLI 参数似乎不支持 --server-type，所以总是允许选择
-            server_type = select(prompt, type_choices)
+            # 如果 CLI 参数指定了有效的 server_type，直接使用
+            if args.server_type and args.server_type in type_choices:
+                server_type = args.server_type
+            else:
+                default_idx = 0
+                if server_type in type_choices:
+                    default_idx = type_choices.index(server_type)
+
+                default_type = type_choices[default_idx]
+                prompt = f"选择连接类型 (默认: {default_type})"
+                server_type = select(prompt, type_choices)
 
     if not server_auto and not host:
         if not args.non_interactive:

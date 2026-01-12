@@ -348,6 +348,11 @@ class OlivOSCLI:
         add_parser.add_argument("--access-token", type=str, help="OneBot 访问令牌 (access_token)")
         add_parser.add_argument("--url", type=str, help="服务器 URL (替代 host:port)")
         add_parser.add_argument(
+            "--server-type",
+            type=str,
+            help="服务器连接类型 (如: post, websocket, reverse_websocket)",
+        )
+        add_parser.add_argument(
             "--model-type", type=str, help="模型类型 (如: default, public, private)"
         )
         add_parser.add_argument("--debug", action="store_true", help="启用调试模式")
