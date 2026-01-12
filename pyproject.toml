@@ -1,6 +1,6 @@
 [project]
 name = "olivos-cli"
-version = "0.4.2"
+version = "0.4.3"
 description = "OlivOS CLI/TUI 工具 - 用于构建、部署和管理 OlivOS 应用"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -34,6 +34,7 @@ include = [
 
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
+"templates" = "olivos_cli/templates"
 
 [tool.pdm]
 distribution = true
