@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 systemd service 模板生成
 使用 Jinja2 渲染模板

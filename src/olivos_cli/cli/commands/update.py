@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 update 命令实现
 """

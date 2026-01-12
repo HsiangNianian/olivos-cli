@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 package 命令实现
 """

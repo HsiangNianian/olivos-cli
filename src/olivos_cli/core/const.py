@@ -14,14 +14,14 @@ if IS_WINDOWS:
         _app_data = Path.home() / "AppData" / "Local"
     else:
         _app_data = Path(_app_data)
-    
+
     _base_dir = _app_data / "olivos-cli"
-    
+
     CONFIG_DIR = _base_dir / "config"
     DATA_DIR = _base_dir / "data"
     CACHE_DIR = _base_dir / "cache"
     LOG_DIR = _base_dir / "log"
-    
+
     # Windows 下 systemd 用户目录无意义，设为用户主目录
     SYSTEMD_USER_DIR = Path.home()
 else:
