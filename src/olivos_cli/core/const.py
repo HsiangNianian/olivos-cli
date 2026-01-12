@@ -2,39 +2,40 @@
 常量定义模块
 """
 
+import os
+import sys
 from pathlib import Path
 
-# =============================================================================
-# 路径常量
-# =============================================================================
+IS_WINDOWS = sys.platform == "win32"
 
-CONFIG_DIR = Path.home() / ".config" / "olivos-cli"
+if IS_WINDOWS:
+    _app_data = os.getenv("LOCALAPPDATA")
+    if not _app_data:
+        _app_data = Path.home() / "AppData" / "Local"
+    else:
+        _app_data = Path(_app_data)
+
+    _base_dir = _app_data / "olivos-cli"
+
+    CONFIG_DIR = _base_dir / "config"
+    DATA_DIR = _base_dir / "data"
+    CACHE_DIR = _base_dir / "cache"
+    LOG_DIR = _base_dir / "log"
+
+    # Windows 下 systemd 用户目录无意义，设为用户主目录
+    SYSTEMD_USER_DIR = Path.home()
+else:
+    CONFIG_DIR = Path.home() / ".config" / "olivos-cli"
+    DATA_DIR = Path.home() / ".local" / "share" / "olivos-cli"
+    CACHE_DIR = Path.home() / ".cache" / "olivos-cli"
+    LOG_DIR = Path.home() / ".local" / "state" / "olivos-cli"
+    SYSTEMD_USER_DIR = Path.home() / ".config" / "systemd" / "user"
+
 CONFIG_FILE = CONFIG_DIR / "config.toml"
-DATA_DIR = Path.home() / ".local" / "share" / "olivos-cli"
-CACHE_DIR = Path.home() / ".cache" / "olivos-cli"
-LOG_DIR = Path.home() / ".local" / "state" / "olivos-cli"
-
-# 当前工作目录（用于 OlivOS 安装，默认克隆到当前目录）
-CURRENT_DIR = Path.cwd()
-
-# =============================================================================
-# Git 配置
-# =============================================================================
-
-DEFAULT_REPO_URL = "https://github.com/OlivOS-Team/OlivOS.git"
-DEFAULT_MIRROR_URL = "https://ghfast.top/https://github.com/OlivOS-Team/OlivOS.git"
-DEFAULT_BRANCH = "main"
-
-# =============================================================================
-# systemd 配置
-# =============================================================================
-
-SYSTEMD_USER_DIR = Path.home() / ".config" / "systemd" / "user"
 DEFAULT_SERVICE_NAME = "olivos-cli"
-
-# =============================================================================
-# 支持的适配器列表
-# =============================================================================
+DEFAULT_BRANCH = "main"
+DEFAULT_MIRROR_URL = "https://ghproxy.hydroroll.team"
+DEFAULT_REPO_URL = "https://github.com/OlivOS-Team/OlivOS"
 
 SUPPORTED_ADAPTERS = {
     "onebot": {
@@ -124,15 +125,5 @@ SUPPORTED_ADAPTERS = {
 }
 
 ADAPTER_TYPE_CHOICES = list(SUPPORTED_ADAPTERS.keys())
-
-# =============================================================================
-# 包管理器类型
-# =============================================================================
-
 PACKAGE_MANAGERS = ["uv", "pip", "poetry", "rye", "pdm"]
-
-# =============================================================================
-# 日志级别
-# =============================================================================
-
 LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 配置管理模块
 处理 TOML 配置文件读写
@@ -37,6 +36,7 @@ from .const import (
     LOG_LEVELS,
     PACKAGE_MANAGERS,
     SYSTEMD_USER_DIR,
+    IS_WINDOWS,
 )
 from .exceptions import ConfigError
 from .logger import get_logger
@@ -84,7 +84,7 @@ class GitConfig:
     repo_url: str = DEFAULT_REPO_URL
     mirror_url: str = DEFAULT_MIRROR_URL
     use_mirror: bool = False
-    install_path: str = "./OlivOS"
+    install_path: str = str(Path("OlivOS"))
     branch: str = DEFAULT_BRANCH
     commit_hash: Optional[str] = None
     depth: int = 1
@@ -104,7 +104,9 @@ class PackageUVConfig:
     """UV 包管理器配置"""
 
     python_version: str = "3.11"
-    cache_dir: str = "~/.cache/olivos-cli/uv"
+    cache_dir: str = field(
+        default_factory=lambda: str(Path.home() / ".cache" / "olivos-cli" / "uv")
+    )
     index_url: str = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
     extra_index_url: list[str] = field(default_factory=list)
 
@@ -141,7 +143,7 @@ class SystemdRuntimeConfig:
 
     def __post_init__(self):
         if self.working_directory is None:
-            self.working_directory = "./OlivOS"
+            self.working_directory = str(Path("OlivOS"))
 
 
 @dataclass
@@ -149,7 +151,7 @@ class SystemdConfig:
     """systemd 配置"""
 
     user_mode: bool = True
-    service_dir: str = "~/.config/systemd/user"
+    service_dir: str = field(default_factory=lambda: str(SYSTEMD_USER_DIR))
     service_name: str = DEFAULT_SERVICE_NAME
     runtime: SystemdRuntimeConfig = field(default_factory=SystemdRuntimeConfig)
 
@@ -175,10 +177,16 @@ class OlivOSBasicConfig:
 class OlivOSConfig:
     """OlivOS 配置"""
 
-    root_path: str = "./OlivOS"
-    conf_path: str = "./OlivOS/conf"
-    plugin_path: str = "./OlivOS/plugin"
-    log_path: str = "~/.local/state/olivos"
+    root_path: str = str(Path("OlivOS"))
+    conf_path: str = str(Path("OlivOS") / "conf")
+    plugin_path: str = str(Path("OlivOS") / "plugin")
+    log_path: str = field(
+        default_factory=lambda: str(
+            LOG_DIR.parent.parent / "OlivOS"
+            if IS_WINDOWS
+            else Path.home() / ".local" / "state" / "olivos"
+        )
+    )
     basic: OlivOSBasicConfig = field(default_factory=OlivOSBasicConfig)
 
     @property
@@ -206,7 +214,13 @@ class OlivOSConfig:
 class LoggingConfig:
     """日志配置"""
 
-    olivos_log_file: str = "~/.local/state/olivos/olivos.log"
+    olivos_log_file: str = field(
+        default_factory=lambda: str(
+            LOG_DIR.parent.parent / "OlivOS" / "olivos.log"
+            if IS_WINDOWS
+            else Path.home() / ".local" / "state" / "olivos" / "olivos.log"
+        )
+    )
     log_rotation: bool = True
     max_size_mb: int = 100
     keep_days: int = 30
@@ -228,7 +242,12 @@ class MonitoringConfig:
 class PluginsConfig:
     """插件配置"""
 
-    plugin_dirs: list[str] = field(default_factory=lambda: ["./OlivOS/plugin", "./plugins"])
+    plugin_dirs: list[str] = field(
+        default_factory=lambda: [
+            str(Path("OlivOS") / "plugin"),
+            str(Path("plugins")),
+        ]
+    )
     auto_load: list[str] = field(default_factory=list)
 
     @property
@@ -241,7 +260,7 @@ class InstanceConfig:
     """实例配置"""
 
     name: str = "primary"
-    path: str = "./OlivOS"
+    path: str = str(Path("OlivOS"))
     service_name: str = DEFAULT_SERVICE_NAME
     enabled: bool = True
     branch: str = DEFAULT_BRANCH
@@ -257,7 +276,7 @@ class AdvancedConfig:
 
     update_strategy: str = "auto"
     backup_before_update: bool = True
-    backup_dir: str = "~/.local/share/olivos-cli/backups"
+    backup_dir: str = field(default_factory=lambda: str(DATA_DIR / "backups"))
     concurrent_downloads: int = 4
 
     @property

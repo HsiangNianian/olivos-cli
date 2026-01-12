@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 """
 status 命令实现
 """
 
 import subprocess
+import sys
 from pathlib import Path
 
 from ...core import ConfigManager, get_logger
@@ -50,14 +50,17 @@ def _cmd_status_show(config, install_path: Path) -> int:
             table.add_row("当前提交", git_status.get("commit", "-")[:8])
 
     # systemd 服务状态
-    systemd = SystemdManager(user_mode=config.systemd.user_mode)
-    service_status = systemd.status(config.systemd.service_name)
-    table.add_row(
-        "服务已加载", "[green]是[/green]" if service_status.get("loaded") else "[red]否[/red]"
-    )
-    table.add_row(
-        "服务运行中", "[green]是[/green]" if service_status.get("running") else "[red]否[/red]"
-    )
+    if sys.platform != "win32":
+        systemd = SystemdManager(user_mode=config.systemd.user_mode)
+        service_status = systemd.status(config.systemd.service_name)
+        table.add_row(
+            "服务已加载", "[green]是[/green]" if service_status.get("loaded") else "[red]否[/red]"
+        )
+        table.add_row(
+            "服务运行中", "[green]是[/green]" if service_status.get("running") else "[red]否[/red]"
+        )
+    else:
+        table.add_row("服务状态", "[yellow]Windows 不支持[/yellow]")
 
     console.print(table)
     return 0

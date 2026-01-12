@@ -6,6 +6,130 @@
 [![Code Style](https://img.shields.io/badge/code%20style-black-2025.svg)](https://github.com/psf/black)
 [![License](https://img.shields.io/badge/license-AGPLv3-green.svg)](./LICENSE)
 
+```mermaid
+classDiagram
+    class GitConfig {
+        +str repo_url
+        +str mirror_url
+        +bool use_mirror
+        +str install_path
+        +str branch
+        +str commit_hash
+        +int depth
+    }
+
+    class PackageUVConfig {
+        +str python_version
+        +str cache_dir
+        +str index_url
+        +list~str~ extra_index_url
+    }
+
+    class SystemdRuntimeConfig {
+        +str working_directory
+        +str exec_start
+        +str exec_stop
+        +str restart
+        +int restart_sec
+        +__post_init__()
+    }
+
+    class SystemdConfig {
+        +bool user_mode
+        +str service_dir
+        +str service_name
+        +SystemdRuntimeConfig runtime
+    }
+
+    class OlivOSBasicConfig {
+        +str host
+        +int port
+        +bool debug
+        +str log_level
+    }
+
+    class OlivOSConfig {
+        +str root_path
+        +str conf_path
+        +str plugin_path
+        +str log_path
+        +OlivOSBasicConfig basic
+        +property conf_file
+        +property plugin_dir
+        +property log_dir
+    }
+
+    class LoggingConfig {
+        +str olivos_log_file
+        +bool log_rotation
+        +int max_size_mb
+        +int keep_days
+    }
+
+    class PluginsConfig {
+        +list~str~ plugin_dirs
+        +list~str~ auto_load
+        +property all_plugin_dirs
+    }
+
+    class InstanceConfig {
+        +str name
+        +str path
+        +str service_name
+        +bool enabled
+        +str branch
+    }
+
+    class AdvancedConfig {
+        +str update_strategy
+        +bool backup_before_update
+        +str backup_dir
+        +int concurrent_downloads
+        +property backup_path
+    }
+
+    class ConstModule {
+        +bool IS_WINDOWS
+        +Path CONFIG_DIR
+        +Path DATA_DIR
+        +Path CACHE_DIR
+        +Path LOG_DIR
+        +Path SYSTEMD_USER_DIR
+        +str DEFAULT_SERVICE_NAME
+        +str DEFAULT_REPO_URL
+        +str DEFAULT_MIRROR_URL
+        +str DEFAULT_BRANCH
+    }
+
+    class SystemdManager {
+        +bool user_mode
+        +Path service_dir
+        +SystemdManager(user_mode, service_dir)
+        +_get_systemctl_cmd() list~str~
+        +status(service_name) dict
+        +start(service_name) int
+        +stop(service_name) int
+        +restart(service_name) int
+        +enable(service_name) int
+        +disable(service_name) int
+    }
+
+    ConstModule <.. GitConfig : uses DEFAULT_REPO_URL
+    ConstModule <.. GitConfig : uses DEFAULT_MIRROR_URL
+    ConstModule <.. GitConfig : uses DEFAULT_BRANCH
+
+    ConstModule <.. PackageUVConfig : uses Path.home
+    ConstModule <.. SystemdConfig : uses SYSTEMD_USER_DIR
+    ConstModule <.. OlivOSConfig : uses LOG_DIR
+    ConstModule <.. LoggingConfig : uses LOG_DIR
+    ConstModule <.. AdvancedConfig : uses DATA_DIR
+    ConstModule <.. SystemdManager : uses SYSTEMD_USER_DIR
+
+    SystemdConfig --> SystemdRuntimeConfig : has
+    OlivOSConfig --> OlivOSBasicConfig : has
+    SystemdManager --> SystemdConfig : configured_by
+```
+
 ## 特性
 
 - **🚀 一键部署** - 自动克隆 OlivOS 仓库、创建虚拟环境并安装依赖

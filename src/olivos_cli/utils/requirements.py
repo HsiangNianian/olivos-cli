@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Requirements 文件选择工具
 """

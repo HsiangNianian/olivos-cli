@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 account 命令实现
 """

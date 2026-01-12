@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 config 命令实现
 """

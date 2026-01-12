@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 systemd 服务管理
 """
@@ -9,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from ..core.config import ConfigManager, expand_path
+from ..core.const import SYSTEMD_USER_DIR
 from ..core.exceptions import SystemdError
 from ..core.logger import get_logger
 from ..utils import run_command
@@ -25,7 +25,7 @@ class SystemdManager:
 
     def __init__(self, user_mode: bool = True, service_dir: Optional[Path] = None):
         self.user_mode = user_mode
-        self.service_dir = service_dir or expand_path("~/.config/systemd/user")
+        self.service_dir = service_dir or SYSTEMD_USER_DIR
 
     def _get_systemctl_cmd(self) -> list[str]:
         """获取 systemctl 命令"""

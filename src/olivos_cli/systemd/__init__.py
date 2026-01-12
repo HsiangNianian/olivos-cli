@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 systemd 集成模块
 """

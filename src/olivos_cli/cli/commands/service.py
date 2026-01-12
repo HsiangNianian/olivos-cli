@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 service 命令实现
 """
@@ -16,6 +15,10 @@ logger = get_logger()
 
 def cmd_service(config_manager: ConfigManager, args) -> int:
     """服务管理"""
+    if sys.platform == "win32":
+        logger.warning_print("Windows 暂不支持服务管理功能")
+        return 0
+
     action = args.svc_action
 
     if not action:

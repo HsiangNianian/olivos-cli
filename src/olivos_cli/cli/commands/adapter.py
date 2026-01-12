@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 adapter 命令实现
 """
