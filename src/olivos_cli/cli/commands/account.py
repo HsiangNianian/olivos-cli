@@ -148,13 +148,23 @@ def _select_account_type(account_api, args) -> dict | None:
 
     # 步骤 1: 选择平台
     platform_choices = [platform_names.get(p, p) for p in platform_list]
+    # 添加"自定义"平台选项
+    platform_choices.append("自定义/全部 (All/Custom)")
+    
     platform_choice = select("选择平台", platform_choices)
+
+    if platform_choice == "自定义/全部 (All/Custom)":
+        return None  # 返回 None 触发 legacy 全部列表逻辑
+        
     platform_idx = platform_choices.index(platform_choice)
     selected_platform = platform_list[platform_idx]
 
     # 步骤 2: 筛选该平台的账号类型模板
     platform_templates = []
     for name, cfg in account_types.items():
+        # 过滤掉 OlivOS 中用于占位的"自定义"选项，避免与 CLI 的"自定义配置"重复
+        if name == "自定义":
+            continue
         if cfg.platform == selected_platform:
             platform_templates.append((name, cfg))
 
@@ -167,17 +177,8 @@ def _select_account_type(account_api, args) -> dict | None:
     for name, cfg in platform_templates:
         template_choices.append(f"{name}")
 
-    # 添加"自定义"选项
-    template_choices.append("自定义配置")
-
     template_choice = select("选择账号类型模板", template_choices)
     template_idx = template_choices.index(template_choice)
-
-    # 检查是否选择"自定义"
-    if template_idx == len(template_choices) - 1:
-        logger.info_print("已选择: 自定义配置")
-        # 返回 None 让用户使用 legacy 方式自定义
-        return None
 
     # 获取选择的模板
     selected_name, selected_template = platform_templates[template_idx]
@@ -544,18 +545,38 @@ def _collect_server_info(adapter, args) -> AccountServer:
     port = args.port
     access_token = getattr(args, 'access_token', None)
 
+    server_auto = adapter.server_auto
+    server_type = adapter.server_type.value
+
     # 交互式询问
-    if not adapter.server_auto and not host:
+    if not args.non_interactive:
+        # 如果默认是自动模式，询问是否要在手动模式下配置
+        if server_auto:
+            if not confirm(f"是否使用默认服务器配置 (自动模式: {server_type})?", default=True):
+                server_auto = False
+
+        # 如果是手动模式（原生或用户切换），允许选择连接类型
+        if not server_auto:
+            type_choices = ["post", "websocket", "reverse_websocket"]
+            default_idx = 0
+            if server_type in type_choices:
+                default_idx = type_choices.index(server_type)
+            
+            # 只有当用户没有显式指定 --server-type (如果支持该参数) 时才询问
+            # 目前 CLI 参数似乎不支持 --server-type，所以总是允许选择
+            server_type = select("选择连接类型", type_choices, default=default_idx)
+
+    if not server_auto and not host:
         if not args.non_interactive:
             host = ask("服务器地址", default="127.0.0.1")
 
-    if not adapter.server_auto and not port:
+    if not server_auto and not port:
         if not args.non_interactive:
             port = int(ask("服务器端口", default="5700"))
 
     return AccountServer(
-        auto=adapter.server_auto,
-        type=adapter.server_type.value,
+        auto=server_auto,
+        type=server_type,
         host=host or "",
         port=port or 0,
         access_token=access_token or "",
@@ -592,7 +613,8 @@ def _collect_extends_info(adapter, args) -> dict:
 def _cmd_account_remove(config: OlivOSConfigManager, args) -> int:
     """删除账号"""
     account_id = args.account_id
-
+
+
     if not confirm(f"确定要删除账号 {account_id} 吗？"):
         return 0
 
