@@ -78,16 +78,18 @@ class OlivOSConfigManager:
 
             accounts = []
             for acc_data in data.get("account", []):
-                accounts.append(Account(
-                    id=acc_data.get("id", ""),
-                    password=acc_data.get("password", ""),
-                    sdk_type=acc_data.get("sdk_type", ""),
-                    platform_type=acc_data.get("platform_type", ""),
-                    model_type=acc_data.get("model_type", "default"),
-                    extends=acc_data.get("extends", {}),
-                    debug=acc_data.get("debug", False),
-                    server=acc_data.get("server", {}),
-                ))
+                accounts.append(
+                    Account(
+                        id=acc_data.get("id", ""),
+                        password=acc_data.get("password", ""),
+                        sdk_type=acc_data.get("sdk_type", ""),
+                        platform_type=acc_data.get("platform_type", ""),
+                        model_type=acc_data.get("model_type", "default"),
+                        extends=acc_data.get("extends", {}),
+                        debug=acc_data.get("debug", False),
+                        server=acc_data.get("server", {}),
+                    )
+                )
             return accounts
         except Exception as e:
             raise OlivOSConfigError(f"读取账号配置失败: {e}") from e
@@ -97,9 +99,7 @@ class OlivOSConfigManager:
         self.ensure_dirs()
 
         try:
-            data = {
-                "account": [acc.to_dict() for acc in accounts]
-            }
+            data = {"account": [acc.to_dict() for acc in accounts]}
             with open(self.account_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
@@ -111,10 +111,12 @@ class OlivOSConfigManager:
 
         # 检查是否已存在（同一适配器下：platform + sdk + model 相同）
         for existing in accounts:
-            if (str(existing.id) == str(account.id) and
-                existing.platform_type == account.platform_type and
-                existing.sdk_type == account.sdk_type and
-                existing.model_type == account.model_type):
+            if (
+                str(existing.id) == str(account.id)
+                and existing.platform_type == account.platform_type
+                and existing.sdk_type == account.sdk_type
+                and existing.model_type == account.model_type
+            ):
                 raise OlivOSConfigError(
                     f"账号已存在: {account.id} (适配器: {account.platform_type}/{account.sdk_type}/{account.model_type})"
                 )
@@ -129,8 +131,11 @@ class OlivOSConfigManager:
 
         original_count = len(accounts)
         accounts = [
-            acc for acc in accounts
-            if not (str(acc.id) == str(account_id) and (sdk_type is None or acc.sdk_type == sdk_type))
+            acc
+            for acc in accounts
+            if not (
+                str(acc.id) == str(account_id) and (sdk_type is None or acc.sdk_type == sdk_type)
+            )
         ]
 
         if len(accounts) < original_count:

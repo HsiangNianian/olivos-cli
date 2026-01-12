@@ -88,6 +88,7 @@ def _cmd_account_add(config: OlivOSConfigManager, args) -> int:
     # 尝试从 OlivOS 读取预配置的账号类型
     try:
         from ...olivos import get_account_api
+
         account_api = get_account_api(config.root_path)
 
         # 选择账号类型（传入 account_api 以获取完整数据）
@@ -148,18 +149,30 @@ def _select_account_type(account_api, args) -> dict | None:
 
     # 步骤 1: 选择平台
     platform_choices = [platform_names.get(p, p) for p in platform_list]
+    # 添加"自定义"平台选项
+    platform_choices.append("自定义/全部 (All/Custom)")
+
     platform_choice = select("选择平台", platform_choices)
+
+    if platform_choice == "自定义/全部 (All/Custom)":
+        return None  # 返回 None 触发 legacy 全部列表逻辑
+
     platform_idx = platform_choices.index(platform_choice)
     selected_platform = platform_list[platform_idx]
 
     # 步骤 2: 筛选该平台的账号类型模板
     platform_templates = []
     for name, cfg in account_types.items():
+        # 过滤掉 OlivOS 中用于占位的"自定义"选项，避免与 CLI 的"自定义配置"重复
+        if name == "自定义":
+            continue
         if cfg.platform == selected_platform:
             platform_templates.append((name, cfg))
 
     if not platform_templates:
-        logger.warning_print(f"平台 {platform_names.get(selected_platform, selected_platform)} 没有可用的账号类型模板")
+        logger.warning_print(
+            f"平台 {platform_names.get(selected_platform, selected_platform)} 没有可用的账号类型模板"
+        )
         return None
 
     # 步骤 3: 显示账号类型模板列表
@@ -167,17 +180,8 @@ def _select_account_type(account_api, args) -> dict | None:
     for name, cfg in platform_templates:
         template_choices.append(f"{name}")
 
-    # 添加"自定义"选项
-    template_choices.append("自定义配置")
-
     template_choice = select("选择账号类型模板", template_choices)
     template_idx = template_choices.index(template_choice)
-
-    # 检查是否选择"自定义"
-    if template_idx == len(template_choices) - 1:
-        logger.info_print("已选择: 自定义配置")
-        # 返回 None 让用户使用 legacy 方式自定义
-        return None
 
     # 获取选择的模板
     selected_name, selected_template = platform_templates[template_idx]
@@ -246,16 +250,16 @@ def _add_account_with_type(config: OlivOSConfigManager, type_config: dict, args)
         # 检查是否需要访问令牌
         # 需要访问令牌的平台列表
         token_requiring_platforms = [
-            "telegram",      # Telegram Bot
-            "qqGuild",       # QQ 频道 V1/V2
-            "discord",       # Discord Bot
-            "kaiheila",      # KOOK
-            "biliLive",      # B站直播间
-            "mhyVila",       # 米游社大别野
-            "dodo",          # Dodo
-            "fanbook",       # Fanbook
-            "hackChat",      # Hack.Chat
-            "xiaoheihe",     # 小黑盒
+            "telegram",  # Telegram Bot
+            "qqGuild",  # QQ 频道 V1/V2
+            "discord",  # Discord Bot
+            "kaiheila",  # KOOK
+            "biliLive",  # B站直播间
+            "mhyVila",  # 米游社大别野
+            "dodo",  # Dodo
+            "fanbook",  # Fanbook
+            "hackChat",  # Hack.Chat
+            "xiaoheihe",  # 小黑盒
         ]
 
         if type_config["platform"] in token_requiring_platforms:
@@ -286,7 +290,7 @@ def _add_account_with_type(config: OlivOSConfigManager, type_config: dict, args)
         sdk_type=type_config["sdk"],
         platform_type=type_config["platform"],
         model_type=type_config["model"],
-        debug=getattr(args, 'debug', False),
+        debug=getattr(args, "debug", False),
         server=server_data,
         extends={},
     )
@@ -352,7 +356,7 @@ def _add_account_legacy(config: OlivOSConfigManager, args) -> int:
         sdk_type=adapter.sdk_type,
         platform_type=adapter.platform_type,
         model_type=adapter.model_type,
-        debug=getattr(args, 'debug', False),
+        debug=getattr(args, "debug", False),
         server=server_data,
         extends=extends_data,
     )
@@ -465,7 +469,7 @@ def _select_model_type(adapter, args) -> str | None:
     if not adapter.model_type_options:
         return adapter.model_type
 
-    model_type = getattr(args, 'model_type', None)
+    model_type = getattr(args, "model_type", None)
     if model_type:
         if model_type in adapter.model_type_options:
             return model_type
@@ -514,7 +518,7 @@ def _collect_account_info(adapter, args) -> dict:
 
     # access_token (某些适配器需要)
     if "server.access_token" in adapter.required_fields:
-        access_token = getattr(args, 'access_token', None)
+        access_token = getattr(args, "access_token", None)
         if access_token:
             info["access_token"] = access_token
         elif args.non_interactive:
@@ -530,32 +534,57 @@ def _collect_server_info(adapter, args) -> AccountServer:
     server_args = {}
 
     # URL 优先
-    url = getattr(args, 'url', None)
+    url = getattr(args, "url", None)
     if url:
         return AccountServer(
             auto=adapter.server_auto,
             type=adapter.server_type.value,
             url=url,
-            access_token=getattr(args, 'access_token', "") or "",
+            access_token=getattr(args, "access_token", "") or "",
         )
 
     # host 和 port
     host = args.host
     port = args.port
-    access_token = getattr(args, 'access_token', None)
+    access_token = getattr(args, "access_token", None)
+
+    server_auto = adapter.server_auto
+    server_type = adapter.server_type.value
 
     # 交互式询问
-    if not adapter.server_auto and not host:
+    if not args.non_interactive:
+        # 如果默认是自动模式，询问是否要在手动模式下配置
+        if server_auto:
+            if not confirm(f"是否使用默认服务器配置 (自动模式: {server_type})?", default=True):
+                server_auto = False
+
+        # 如果是手动模式（原生或用户切换），允许选择连接类型
+        if not server_auto:
+            type_choices = ["post", "websocket", "reverse_websocket"]
+
+            # 如果 CLI 参数指定了有效的 server_type，直接使用
+            if args.server_type and args.server_type in type_choices:
+                server_type = args.server_type
+            else:
+                default_idx = 0
+                if server_type in type_choices:
+                    default_idx = type_choices.index(server_type)
+
+                default_type = type_choices[default_idx]
+                prompt = f"选择连接类型 (默认: {default_type})"
+                server_type = select(prompt, type_choices)
+
+    if not server_auto and not host:
         if not args.non_interactive:
             host = ask("服务器地址", default="127.0.0.1")
 
-    if not adapter.server_auto and not port:
+    if not server_auto and not port:
         if not args.non_interactive:
             port = int(ask("服务器端口", default="5700"))
 
     return AccountServer(
-        auto=adapter.server_auto,
-        type=adapter.server_type.value,
+        auto=server_auto,
+        type=server_type,
         host=host or "",
         port=port or 0,
         access_token=access_token or "",
@@ -570,7 +599,7 @@ def _collect_extends_info(adapter, args) -> dict:
     extends = {}
 
     # 从命令行参数解析 --extends key=value 格式
-    extends_args = getattr(args, 'extends', None)
+    extends_args = getattr(args, "extends", None)
     if extends_args:
         for item in extends_args:
             if "=" in item:
@@ -592,7 +621,7 @@ def _collect_extends_info(adapter, args) -> dict:
 def _cmd_account_remove(config: OlivOSConfigManager, args) -> int:
     """删除账号"""
     account_id = args.account_id
-
+
     if not confirm(f"确定要删除账号 {account_id} 吗？"):
         return 0
 
@@ -651,51 +680,35 @@ def _print_platform_tips(platform: str):
             "Telegram 配置提示：",
             "  • 账号 ID：机器人的用户名或数字 ID",
             "  • Bot Token：通过 @Botfather 创建机器人时获得",
-            "  • 格式示例：123456789:AAH4XXX..."
+            "  • 格式示例：123456789:AAH4XXX...",
         ],
         "qqGuild": [
             "QQ 频道配置提示：",
             "  • 账号 ID：频道的 ID",
-            "  • 访问令牌：从 QQ 频道开放平台获取"
+            "  • 访问令牌：从 QQ 频道开放平台获取",
         ],
         "discord": [
             "Discord 配置提示：",
             "  • 账号 ID：机器人的客户端 ID（可选）",
-            "  • 访问令牌：从 Discord 开发者平台获取"
+            "  • 访问令牌：从 Discord 开发者平台获取",
         ],
-        "kaiheila": [
-            "KOOK 配置提示：",
-            "  • 访问令牌：从 KOOK 开放平台获取"
-        ],
-        "biliLive": [
-            "B站直播间配置提示：",
-            "  • 访问令牌：登录模式需要，从 B站获取"
-        ],
+        "kaiheila": ["KOOK 配置提示：", "  • 访问令牌：从 KOOK 开放平台获取"],
+        "biliLive": ["B站直播间配置提示：", "  • 访问令牌：登录模式需要，从 B站获取"],
         "mhyVila": [
             "米游社大别野配置提示：",
             "  • 账号 ID：用户 ID",
             "  • 密码：用户密码",
-            "  • 访问令牌：从米游社获取"
+            "  • 访问令牌：从米游社获取",
         ],
-        "dodo": [
-            "Dodo 配置提示：",
-            "  • 账号 ID：Bot ID",
-            "  • 访问令牌：从 Dodo 开放平台获取"
-        ],
-        "fanbook": [
-            "Fanbook 配置提示：",
-            "  • 访问令牌：从 Fanbook 开放平台获取"
-        ],
+        "dodo": ["Dodo 配置提示：", "  • 账号 ID：Bot ID", "  • 访问令牌：从 Dodo 开放平台获取"],
+        "fanbook": ["Fanbook 配置提示：", "  • 访问令牌：从 Fanbook 开放平台获取"],
         "hackChat": [
             "Hack.Chat 配置提示：",
             "  • 账号 ID：房间名称",
             "  • Bot 名称：机器人的名称",
-            "  • 访问令牌：Bot 名称（再次输入）"
+            "  • 访问令牌：Bot 名称（再次输入）",
         ],
-        "xiaoheihe": [
-            "小黑盒配置提示：",
-            "  • 访问令牌：从小黑盒开放平台获取"
-        ]
+        "xiaoheihe": ["小黑盒配置提示：", "  • 访问令牌：从小黑盒开放平台获取"],
     }
 
     if platform in tips:

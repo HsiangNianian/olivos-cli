@@ -131,9 +131,9 @@ def select_multiple(
     while True:
         try:
             answer = Prompt.ask(
-                f"请选择 (最少 {min_select} 项" +
-                (f", 最多 {max_select} 项" if max_select else "") +
-                ")",
+                f"请选择 (最少 {min_select} 项"
+                + (f", 最多 {max_select} 项" if max_select else "")
+                + ")",
                 console=console,
             )
 
@@ -153,7 +153,7 @@ def select_multiple(
 
             # 检查范围
             if any(i < 0 or i >= len(choices) for i in indices):
-                console.print(f"[red]选择超出范围 (0-{len(choices)-1})，请重试[/red]")
+                console.print(f"[red]选择超出范围 (0-{len(choices) - 1})，请重试[/red]")
                 continue
 
             # 检查重复

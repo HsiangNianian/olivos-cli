@@ -52,8 +52,12 @@ def _cmd_status_show(config, install_path: Path) -> int:
     # systemd 服务状态
     systemd = SystemdManager(user_mode=config.systemd.user_mode)
     service_status = systemd.status(config.systemd.service_name)
-    table.add_row("服务已加载", "[green]是[/green]" if service_status.get("loaded") else "[red]否[/red]")
-    table.add_row("服务运行中", "[green]是[/green]" if service_status.get("running") else "[red]否[/red]")
+    table.add_row(
+        "服务已加载", "[green]是[/green]" if service_status.get("loaded") else "[red]否[/red]"
+    )
+    table.add_row(
+        "服务运行中", "[green]是[/green]" if service_status.get("running") else "[red]否[/red]"
+    )
 
     console.print(table)
     return 0

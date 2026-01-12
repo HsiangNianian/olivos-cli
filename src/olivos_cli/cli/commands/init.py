@@ -21,7 +21,9 @@ logger = get_logger()
 VENV_DIR = ".venv"
 
 
-def _create_venv(install_path: Path, python_path: str, verbose: bool = False, system_site_packages: bool = False) -> Path:
+def _create_venv(
+    install_path: Path, python_path: str, verbose: bool = False, system_site_packages: bool = False
+) -> Path:
     """创建虚拟环境
 
     Args:
@@ -93,20 +95,26 @@ def cmd_init(config_manager: ConfigManager, args) -> int:
         config_manager.load()
 
     # 保存选择的包管理器
-    if hasattr(args, 'package_manager') and args.package_manager:
+    if hasattr(args, "package_manager") and args.package_manager:
         config_manager.config.package.manager = args.package_manager
         config_manager.save()
         logger.info_print(f"包管理器设置为: {args.package_manager}")
 
     # 获取安装路径（确保是绝对路径）
-    install_path = Path(args.path).resolve() if args.path else config_manager.config.git.expanded_install_path.resolve()
+    install_path = (
+        Path(args.path).resolve()
+        if args.path
+        else config_manager.config.git.expanded_install_path.resolve()
+    )
     branch = args.branch or config_manager.config.git.branch
     use_mirror = args.mirror or config_manager.config.git.use_mirror
-    verbose = getattr(args, 'verbose', False) or config_manager.config.cli.verbose
+    verbose = getattr(args, "verbose", False) or config_manager.config.cli.verbose
 
     logger.step(f"初始化 OlivOS 到: {install_path}")
     logger.step(f"分支: {branch}")
-    logger.step(f"Python 版本: {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
+    logger.step(
+        f"Python 版本: {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    )
     logger.step(f"包管理器: {config_manager.config.package.manager}")
     if use_mirror:
         logger.info_print("使用镜像源")
@@ -153,7 +161,7 @@ def cmd_init(config_manager: ConfigManager, args) -> int:
         logger.step("安装依赖...")
 
         # 优先使用指定的依赖文件
-        if hasattr(args, 'requirements') and args.requirements:
+        if hasattr(args, "requirements") and args.requirements:
             requirements_file = install_path / args.requirements
         else:
             requirements_file = get_requirements_file(install_path)
@@ -162,6 +170,7 @@ def cmd_init(config_manager: ConfigManager, args) -> int:
 
         # 检查兼容性并显示警告
         from ...utils import check_requirements_compatibility
+
         warnings = check_requirements_compatibility(requirements_file)
         for warning in warnings:
             logger.warning_print(warning)
@@ -181,7 +190,9 @@ def cmd_init(config_manager: ConfigManager, args) -> int:
                 # 检查是否是 Pillow 编译失败, 目前Pillow只在10.0.0支持了Python3.12, 所以理论上OlivOS不支持Python3.12
                 if "pillow" in error_msg.lower() or "Pillow" in error_msg:
                     logger.warning_print("Pillow 安装失败，尝试使用系统 Pillow...")
-                    if _try_install_with_system_pillow(install_path, venv_path, requirements_file, verbose=True):
+                    if _try_install_with_system_pillow(
+                        install_path, venv_path, requirements_file, verbose=True
+                    ):
                         logger.success("依赖安装成功（使用系统 Pillow）")
                     else:
                         logger.error_print("依赖安装失败")
@@ -222,7 +233,9 @@ def cmd_init(config_manager: ConfigManager, args) -> int:
     return 0
 
 
-def _try_install_with_system_pillow(install_path: Path, venv_path: Path, requirements_file: Path, verbose: bool) -> bool:
+def _try_install_with_system_pillow(
+    install_path: Path, venv_path: Path, requirements_file: Path, verbose: bool
+) -> bool:
     """使用系统 Pillow，跳过 Pillow 的安装
 
     Args:

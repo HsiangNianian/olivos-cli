@@ -73,7 +73,7 @@ def run_command_stream(
 
     def read_stdout():
         for line in process.stdout:
-            line = line.rstrip('\n\r')
+            line = line.rstrip("\n\r")
             if line_callback:
                 line_callback(line)
             elif line.strip():
@@ -82,7 +82,7 @@ def run_command_stream(
     def read_stderr():
         nonlocal returncode
         for line in process.stderr:
-            line = line.rstrip('\n\r')
+            line = line.rstrip("\n\r")
             if error_callback:
                 error_callback(line)
             elif line.strip():

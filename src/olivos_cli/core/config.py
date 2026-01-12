@@ -9,7 +9,8 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
-
+
+
 if sys.version_info >= (3, 11):
     import tomllib
 else:
@@ -227,9 +228,7 @@ class MonitoringConfig:
 class PluginsConfig:
     """插件配置"""
 
-    plugin_dirs: list[str] = field(
-        default_factory=lambda: ["./OlivOS/plugin", "./plugins"]
-    )
+    plugin_dirs: list[str] = field(default_factory=lambda: ["./OlivOS/plugin", "./plugins"])
     auto_load: list[str] = field(default_factory=list)
 
     @property
@@ -299,13 +298,17 @@ class Config:
         if "logging" in data:
             config.logging = LoggingConfig(**_filter_keys(LoggingConfig, data["logging"]))
         if "monitoring" in data:
-            config.monitoring = MonitoringConfig(**_filter_keys(MonitoringConfig, data["monitoring"]))
+            config.monitoring = MonitoringConfig(
+                **_filter_keys(MonitoringConfig, data["monitoring"])
+            )
         if "plugins" in data:
             config.plugins = PluginsConfig(**_filter_keys(PluginsConfig, data["plugins"]))
         if "advanced" in data:
             config.advanced = AdvancedConfig(**_filter_keys(AdvancedConfig, data["advanced"]))
         if "instances" in data:
-            config.instances = [InstanceConfig(**_filter_keys(InstanceConfig, i)) for i in data["instances"]]
+            config.instances = [
+                InstanceConfig(**_filter_keys(InstanceConfig, i)) for i in data["instances"]
+            ]
 
         return config
 
@@ -345,6 +348,7 @@ class Config:
 def _filter_keys(dataclass_cls: type, data: dict[str, Any]) -> dict[str, Any]:
     """过滤字典，只保留 dataclass 中定义的字段"""
     import dataclasses
+
     # 获取 dataclass 的所有字段名
     field_names = {f.name for f in dataclasses.fields(dataclass_cls)}
     # 只保留有效的字段

@@ -16,6 +16,7 @@ logger = get_logger()
 
 class ServerType(str, Enum):
     """服务器对接类型"""
+
     POST = "post"
     WEBSOCKET = "websocket"
 
@@ -51,7 +52,8 @@ class AdapterConfig:
     description: str = ""
 
     # 帮助信息
-    help_text: str = ""
+    help_text: str = ""
+
 
 # 1. onebotV11 - QQ 平台
 ONEBOTV11_MODEL_TYPES = {
@@ -176,7 +178,8 @@ VIRTUAL_TERMINAL_MODEL_TYPES = {
     "default": "虚拟终端",
     "postapi": "HTTP 接口终端",
     "ff14": "FF14 终端",
-}
+}
+
 
 ALL_ADAPTERS: dict[str, AdapterConfig] = {
     # 1. onebotV11 - QQ 平台
@@ -194,7 +197,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="OneBot 11 协议适配器",
         help_text="支持 NapCat、GoCqHttp、WalleQ、Shamrock、LLOneBot、Lagrange 等实现",
     ),
-
     # 2. onebotV12 - QQ 平台
     "onebotV12": AdapterConfig(
         name="OneBot V12 (QQ)",
@@ -210,7 +212,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="OneBot 12 协议适配器",
         help_text="适用于 Walle-Q、ComWeChatBot 等",
     ),
-
     # 3. qqGuild - QQ 频道 V1
     "qqGuild": AdapterConfig(
         name="QQ 频道",
@@ -226,7 +227,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="QQ 频道开放平台",
         help_text="V1 版本接口",
     ),
-
     # 3b. qqGuildV2 - QQ 频道 V2
     "qqGuildV2": AdapterConfig(
         name="QQ 频道 V2",
@@ -242,7 +242,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="QQ 频道开放平台 V2",
         help_text="V2 版本接口，支持 QQ 群官方机器人",
     ),
-
     # 4. OPQBot - QQ 平台
     "OPQBot": AdapterConfig(
         name="OPQBot (QQ)",
@@ -257,7 +256,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="OPQBot 远程协议端",
         help_text="注意：需要向 OPQ 官方申请 Token，账号存在安全风险",
     ),
-
     # 5. red - QQ 平台 (Chronocat)
     "red": AdapterConfig(
         name="RED 协议 (QQ)",
@@ -270,13 +268,10 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         required_fields=["id", "server.host", "server.port", "server.access_token"],
         optional_fields=["extends.http-path"],
         model_type_options=RED_MODEL_TYPES,
-        extends_options={
-            "http-path": {"type": "string", "description": "HTTP 地址"}
-        },
+        extends_options={"http-path": {"type": "string", "description": "HTTP 地址"}},
         description="Chronocat RED 协议",
         help_text="注意：Chronocat 已停止维护",
     ),
-
     # 6. telegram
     "telegram": AdapterConfig(
         name="Telegram",
@@ -291,7 +286,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="Telegram Bot",
         help_text="通过 @botfather 创建机器人，格式: id:token",
     ),
-
     # 7. discord
     "discord": AdapterConfig(
         name="Discord",
@@ -307,7 +301,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="Discord Bot",
         help_text="从 Discord 开发者平台获取 Token",
     ),
-
     # 8. kaiheila (KOOK)
     "kaiheila": AdapterConfig(
         name="KOOK",
@@ -322,7 +315,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="KOOK 开放平台",
         help_text="消息兼容模式以纯文本发送，可解决权限问题",
     ),
-
     # 9. dingtalk
     "dingtalk": AdapterConfig(
         name="钉钉",
@@ -337,7 +329,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="钉钉开放平台",
         help_text="id 为机器人账号的 Robot Code",
     ),
-
     # 10. biliLive
     "biliLive": AdapterConfig(
         name="B站直播间",
@@ -352,7 +343,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="B站直播间弹幕系统",
         help_text="游客模式只能浏览，登录模式可发送消息",
     ),
-
     # 11. mhyVila (米游社大别野)
     "mhyVila": AdapterConfig(
         name="米游社大别野",
@@ -368,7 +358,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="米游社大别野开放平台",
         help_text="server.port 仅沙盒模式需要填写别野号",
     ),
-
     # 12. dodo
     "dodo": AdapterConfig(
         name="Dodo",
@@ -383,7 +372,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="Dodo 开放平台",
         help_text="提供 V1、V2 两个版本的接口",
     ),
-
     # 13. fanbook
     "fanbook": AdapterConfig(
         name="Fanbook",
@@ -398,7 +386,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="Fanbook 开放平台",
         help_text="从 Fanbook 获取 Token",
     ),
-
     # 14. hackChat
     "hackChat": AdapterConfig(
         name="Hack.Chat",
@@ -411,13 +398,10 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         required_fields=["id", "server.access_token", "password"],
         optional_fields=["extends.ws_path"],
         model_type_options=HACKCHAT_MODEL_TYPES,
-        extends_options={
-            "ws_path": {"type": "string", "description": "私有 Websocket 服务器地址"}
-        },
+        extends_options={"ws_path": {"type": "string", "description": "私有 Websocket 服务器地址"}},
         description="Hack.Chat 聊天协议",
         help_text="id 为房间名称，server.access_token 为 Bot 名称",
     ),
-
     # 15. xiaoheihe (小黑盒)
     "xiaoheihe": AdapterConfig(
         name="小黑盒",
@@ -432,7 +416,6 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="小黑盒开放平台",
         help_text="从小黑盒获取 Token",
     ),
-
     # 16. virtualTerminal
     "virtualTerminal": AdapterConfig(
         name="虚拟终端",
@@ -447,7 +430,8 @@ ALL_ADAPTERS: dict[str, AdapterConfig] = {
         description="虚拟聊天终端",
         help_text="用于插件调试和测试",
     ),
-}
+}
+
 
 ADAPTER_GROUPS: dict[str, list[str]] = {
     "QQ 平台": ["onebotV11", "onebotV12", "qqGuild", "qqGuildV2", "OPQBot", "red"],
@@ -465,9 +449,11 @@ def get_adapter_config(key: str) -> AdapterConfig | None:
 def get_adapter_by_platform_sdk(platform: str, sdk: str, model: str) -> AdapterConfig | None:
     """根据 platform_type、sdk_type、model_type 查找适配器"""
     for config in ALL_ADAPTERS.values():
-        if (config.platform_type == platform and
-            config.sdk_type == sdk and
-            config.model_type == model):
+        if (
+            config.platform_type == platform
+            and config.sdk_type == sdk
+            and config.model_type == model
+        ):
             return config
     return None
 

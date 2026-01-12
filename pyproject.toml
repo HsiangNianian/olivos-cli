@@ -35,10 +35,6 @@ include = [
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
 
-# =============================================================================
-# PDM 配置
-# =============================================================================
-
 [tool.pdm]
 distribution = true
 
@@ -56,10 +52,6 @@ includes = ["src/olivos_cli"]
 # PDM 会使用 src 布局
 source-includes = ["tests"]
 
-# =============================================================================
-# 代码质量工具配置
-# =============================================================================
-
 [tool.black]
 line-length = 100
 target-version = ["py311", "py312"]
@@ -68,7 +60,7 @@ include = '\.pyi?$'
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-select = [
+lint.select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
     "F",   # pyflakes
@@ -77,12 +69,12 @@ select = [
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
 ]
-ignore = [
+lint.ignore = [
     "E501",  # line too long (handled by black)
     "B008",  # do not perform function calls in argument defaults
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["olivos_cli"]
 
 [tool.pytest.ini_options]

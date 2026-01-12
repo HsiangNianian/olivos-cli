@@ -172,6 +172,7 @@ class PDMPackageManager(PackageManager):
 
         # 设置 PYPIPROXY_REWRITE 环境变量以支持镜像
         import os
+
         env = os.environ.copy()
         if self.index_url:
             env["PDM_INDEX_URL"] = self.index_url
@@ -226,6 +227,7 @@ class PDMPackageManager(PackageManager):
         logger.step(f"正在虚拟环境安装依赖: {requirements.name}")
 
         import os
+
         env = os.environ.copy()
         if self.index_url:
             env["PDM_INDEX_URL"] = self.index_url

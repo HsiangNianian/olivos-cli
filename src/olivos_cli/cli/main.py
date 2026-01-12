@@ -88,7 +88,8 @@ class OlivOSCLI:
         )
 
         parser.add_argument(
-            "-v", "--version",
+            "-v",
+            "--version",
             action="version",
             version=f"olivos-cli {VERSION}",
         )
@@ -106,7 +107,8 @@ class OlivOSCLI:
         )
 
         parser.add_argument(
-            "-y", "--yes",
+            "-y",
+            "--yes",
             action="store_true",
             help="自动确认所有提示",
         )
@@ -193,13 +195,15 @@ class OlivOSCLI:
             help="跳过依赖安装",
         )
         parser.add_argument(
-            "--package-manager", "-p",
+            "--package-manager",
+            "-p",
             type=str,
             choices=["uv", "pip", "pdm", "poetry", "rye"],
             help="包管理器 (默认: uv)",
         )
         parser.add_argument(
-            "--requirements", "-r",
+            "--requirements",
+            "-r",
             type=str,
             help="依赖文件路径 (相对于 OlivOS 目录)",
         )
@@ -290,7 +294,9 @@ class OlivOSCLI:
         logs_parser = svc_subparsers.add_parser("logs", aliases=["log"], help="查看服务日志")
         logs_parser.add_argument("-n", "--lines", type=int, default=100, help="显示行数")
         logs_parser.add_argument("-f", "--follow", action="store_true", help="实时跟踪")
-        logs_parser.add_argument("--systemd", action="store_true", help="查看 systemd 日志而非 OlivOS 应用日志")
+        logs_parser.add_argument(
+            "--systemd", action="store_true", help="查看 systemd 日志而非 OlivOS 应用日志"
+        )
 
     def _add_adapter_parser(self, subparsers):
         """添加 adapter 命令"""
@@ -332,14 +338,23 @@ class OlivOSCLI:
 
         # add
         add_parser = acc_subparsers.add_parser("add", help="添加账号")
-        add_parser.add_argument("--adapter", type=str, help="适配器类型 (如: napcat, gocqhttp, telegram, discord)")
+        add_parser.add_argument(
+            "--adapter", type=str, help="适配器类型 (如: napcat, gocqhttp, telegram, discord)"
+        )
         add_parser.add_argument("--id", type=str, help="账号 ID")
         add_parser.add_argument("--token", type=str, help="密码/访问令牌")
         add_parser.add_argument("--host", type=str, help="服务器地址")
         add_parser.add_argument("--port", type=int, help="服务器端口")
         add_parser.add_argument("--access-token", type=str, help="OneBot 访问令牌 (access_token)")
         add_parser.add_argument("--url", type=str, help="服务器 URL (替代 host:port)")
-        add_parser.add_argument("--model-type", type=str, help="模型类型 (如: default, public, private)")
+        add_parser.add_argument(
+            "--server-type",
+            type=str,
+            help="服务器连接类型 (如: post, websocket, reverse_websocket)",
+        )
+        add_parser.add_argument(
+            "--model-type", type=str, help="模型类型 (如: default, public, private)"
+        )
         add_parser.add_argument("--debug", action="store_true", help="启用调试模式")
         add_parser.add_argument("--extends", type=str, nargs="+", help="扩展字段 (格式: key=value)")
         add_parser.add_argument("--non-interactive", action="store_true", help="非交互模式")
@@ -393,7 +408,9 @@ class OlivOSCLI:
         parser.add_argument("-n", "--lines", type=int, default=100, help="显示行数")
         parser.add_argument("-f", "--follow", action="store_true", help="实时跟踪")
         parser.add_argument("--pattern", type=str, help="过滤模式")
-        parser.add_argument("--cli", action="store_true", help="查看 CLI 工具日志而非 OlivOS 应用日志")
+        parser.add_argument(
+            "--cli", action="store_true", help="查看 CLI 工具日志而非 OlivOS 应用日志"
+        )
 
     def _add_status_parser(self, subparsers):
         """添加 status 命令"""
@@ -452,7 +469,7 @@ class OlivOSCLI:
 
         # 解析子命令别名
         for attr in dir(parsed):
-            if attr.endswith('_action'):
+            if attr.endswith("_action"):
                 action = getattr(parsed, attr)
                 if action:
                     setattr(parsed, attr, resolve_subcommand_alias(action))
@@ -476,36 +493,47 @@ class OlivOSCLI:
 
         if command == "init":
             from .commands.init import cmd_init
+
             return cmd_init(self.config_manager, args)
         elif command == "git":
             from .commands.git import cmd_git
+
             return cmd_git(self.config_manager, args)
         elif command == "package":
             from .commands.package import cmd_package
+
             return cmd_package(self.config_manager, args)
         elif command == "service":
             from .commands.service import cmd_service
+
             return cmd_service(self.config_manager, args)
         elif command == "adapter":
             from .commands.adapter import cmd_adapter
+
             return cmd_adapter(self.config_manager, args)
         elif command == "account":
             from .commands.account import cmd_account
+
             return cmd_account(self.config_manager, args)
         elif command == "config":
             from .commands.config import cmd_config
+
             return cmd_config(self.config_manager, args)
         elif command == "logs":
             from .commands.logs import cmd_logs
+
             return cmd_logs(self.config_manager, args)
         elif command == "status":
             from .commands.status import cmd_status
+
             return cmd_status(self.config_manager, args)
         elif command == "run":
             from .commands.run import cmd_run
+
             return cmd_run(self.config_manager, args)
         elif command == "update":
             from .commands.update import cmd_update
+
             return cmd_update(self.config_manager, args)
         else:
             self.parser.print_help()
