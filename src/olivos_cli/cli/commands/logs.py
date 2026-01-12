@@ -46,7 +46,7 @@ def cmd_logs(config_manager: ConfigManager, args) -> int:
     lines = result.stdout.strip().split("\n")
 
     # 应用模式过滤和高亮
-    pattern = getattr(args, 'pattern', None)
+    pattern = getattr(args, "pattern", None)
     if pattern:
         filtered_lines = [line for line in lines if re.search(pattern, line, re.IGNORECASE)]
         if filtered_lines:
@@ -58,7 +58,7 @@ def cmd_logs(config_manager: ConfigManager, args) -> int:
                 text = Text()
                 last_end = 0
                 for match in re.finditer(f"({re.escape(pattern)})", line, re.IGNORECASE):
-                    text.append(line[last_end:match.start()])
+                    text.append(line[last_end : match.start()])
                     text.append(match.group(), style="bold red")
                     last_end = match.end()
                 text.append(line[last_end:])

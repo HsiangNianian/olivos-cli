@@ -18,6 +18,7 @@ logger = get_logger()
 @dataclass
 class ValidationResult:
     """校验结果"""
+
     valid: bool
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
@@ -64,9 +65,11 @@ def validate_account_config(account_data: dict, adapter_key: str | None = None) 
     model = account_data.get("model_type", "default")
 
     for adapter in ALL_ADAPTERS.values():
-        if (adapter.platform_type == platform and
-            adapter.sdk_type == sdk and
-            adapter.model_type == model):
+        if (
+            adapter.platform_type == platform
+            and adapter.sdk_type == sdk
+            and adapter.model_type == model
+        ):
             return _validate_with_adapter(account_data, adapter)
 
     # 未找到匹配的适配器配置，进行基础校验
@@ -103,7 +106,7 @@ def _validate_with_adapter(account_data: dict, adapter) -> ValidationResult:
     if "server" in account_data and account_data["server"]:
         server = account_data["server"]
         # server 可能是 dict 或 AccountServer 对象
-        if hasattr(server, 'to_dict'):
+        if hasattr(server, "to_dict"):
             server = server.to_dict()
         server_type = server.get("type", adapter.server_type.value)
 
@@ -166,7 +169,7 @@ def _validate_basic(account_data: dict, result: ValidationResult) -> ValidationR
     if "server" in account_data and account_data["server"]:
         server = account_data["server"]
         # server 可能是 dict 或 AccountServer 对象
-        if hasattr(server, 'to_dict'):
+        if hasattr(server, "to_dict"):
             server = server.to_dict()
 
         # 检查 server.type

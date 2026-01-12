@@ -102,35 +102,46 @@ __all__ = [
 def __getattr__(name: str):
     if name == "ADAPTER_GROUPS":
         from .adapters import ADAPTER_GROUPS
+
         return ADAPTER_GROUPS
     elif name == "ALL_ADAPTERS":
         from .adapters import ALL_ADAPTERS
+
         return ALL_ADAPTERS
     elif name == "get_adapter_config":
         from .adapters import get_adapter_config
+
         return get_adapter_config
     elif name == "list_adapter_configs":
         from .adapters import list_adapter_configs
+
         return list_adapter_configs
     elif name == "validate_account_config":
         from .validation import validate_account_config
+
         return validate_account_config
     elif name == "validate_extends":
         from .validation import validate_extends
+
         return validate_extends
     elif name == "get_adapter_required_fields":
         from .validation import get_adapter_required_fields
+
         return get_adapter_required_fields
     elif name == "get_adapter_optional_fields":
         from .validation import get_adapter_optional_fields
+
         return get_adapter_optional_fields
     elif name == "get_adapter_model_type_options":
         from .validation import get_adapter_model_type_options
+
         return get_adapter_model_type_options
     elif name == "get_adapter_extends_options":
         from .validation import get_adapter_extends_options
+
         return get_adapter_extends_options
     elif name == "get_adapter_by_platform_sdk":
         from .adapters import get_adapter_by_platform_sdk
+
         return get_adapter_by_platform_sdk
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -76,6 +76,7 @@ def get_template_dir() -> Path:
     # 尝试从包内获取
     try:
         import olivos_cli as pkg
+
         pkg_dir = Path(pkg.__file__).parent
         template_dir = pkg_dir / "templates"
         if template_dir.exists():
@@ -125,9 +126,7 @@ def _render_fallback(data: ServiceTemplateData) -> str:
         depends_on = ""
 
     # 处理环境变量
-    environment_vars = "\n".join(
-        [f'Environment="{k}={v}"' for k, v in data.environment.items()]
-    )
+    environment_vars = "\n".join([f'Environment="{k}={v}"' for k, v in data.environment.items()])
 
     # 处理地址族
     restrict_families = " ".join(data.restrict_address_families)

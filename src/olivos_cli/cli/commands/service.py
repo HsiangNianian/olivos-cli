@@ -67,7 +67,9 @@ def cmd_service(config_manager: ConfigManager, args) -> int:
     return 0
 
 
-def _cmd_service_install(systemd: SystemdManager, config_manager: ConfigManager, install_path: Path) -> int:
+def _cmd_service_install(
+    systemd: SystemdManager, config_manager: ConfigManager, install_path: Path
+) -> int:
     """安装服务"""
     if not install_path.exists():
         logger.error_print(f"OlivOS 目录不存在: {install_path}")
@@ -182,18 +184,21 @@ def _cmd_service_status(systemd: SystemdManager, service_name: str) -> int:
     return 0
 
 
-def _cmd_service_logs(systemd: SystemdManager, service_name: str, args, install_path: Path = None) -> int:
+def _cmd_service_logs(
+    systemd: SystemdManager, service_name: str, args, install_path: Path = None
+) -> int:
     """查看服务日志
 
     默认查看 OlivOS 应用日志，使用 --systemd 查看 systemd 日志
     """
     # 检查使用哪个日志源
-    use_systemd = getattr(args, 'systemd', False)
+    use_systemd = getattr(args, "systemd", False)
 
     if not use_systemd:
         # 查看 OlivOS 应用日志（默认）
         if install_path is None:
             from ...core.config import expand_path
+
             install_path = expand_path("~/.local/share/olivos/OlivOS").resolve()
 
         log_file = install_path.parent / "logs" / "olivos.log"
@@ -211,9 +216,10 @@ def _cmd_service_logs(systemd: SystemdManager, service_name: str, args, install_
         lines = result.stdout.strip().split("\n")
 
         # 应用模式过滤和高亮
-        pattern = getattr(args, 'pattern', None)
+        pattern = getattr(args, "pattern", None)
         if pattern:
             import re
+
             filtered_lines = [line for line in lines if re.search(pattern, line, re.IGNORECASE)]
             if filtered_lines:
                 from rich.console import Console
@@ -224,7 +230,7 @@ def _cmd_service_logs(systemd: SystemdManager, service_name: str, args, install_
                     text = Text()
                     last_end = 0
                     for match in re.finditer(f"({re.escape(pattern)})", line, re.IGNORECASE):
-                        text.append(line[last_end:match.start()])
+                        text.append(line[last_end : match.start()])
                         text.append(match.group(), style="bold red")
                         last_end = match.end()
                     text.append(line[last_end:])

@@ -54,7 +54,9 @@ class OlivOSAccountAPI:
                 self.account_api_file = path
                 break
         else:
-            self.account_api_file = olivos_path / "OlivOS" / "core" / "core" / "accountMetadataAPI.py"
+            self.account_api_file = (
+                olivos_path / "OlivOS" / "core" / "core" / "accountMetadataAPI.py"
+            )
         self._account_type_mapping: dict[str, AccountTypeConfig] | None = None
         self._adapter_types: dict[str, dict[str, list[str]]] | None = None
 
@@ -70,7 +72,7 @@ class OlivOSAccountAPI:
         """解析 accountTypeMappingList"""
         if self._account_type_mapping is not None:
             return self._account_type_mapping
-
+
         # 找到 accountTypeMappingList = { 的位置
         start_marker = "accountTypeMappingList = {"
         start_idx = content.find(start_marker)
@@ -84,17 +86,17 @@ class OlivOSAccountAPI:
         end_idx = start_idx + len(start_marker) - 1  # 包含起始的 {
 
         for i in range(start_idx + len(start_marker) - 1, len(content)):
-            if content[i] == '{':
+            if content[i] == "{":
                 brace_count += 1
                 in_dict = True
-            elif content[i] == '}':
+            elif content[i] == "}":
                 brace_count -= 1
                 if in_dict and brace_count == 0:
                     end_idx = i + 1
                     break
 
-        dict_content = content[start_idx + len("accountTypeMappingList"):end_idx].strip()
-        if not dict_content.startswith('='):
+        dict_content = content[start_idx + len("accountTypeMappingList") : end_idx].strip()
+        if not dict_content.startswith("="):
             logger.warning_print("accountTypeMappingList 格式错误")
             return {}
         dict_content = dict_content[1:].strip()  # 移除 '='
@@ -133,23 +135,25 @@ class OlivOSAccountAPI:
         if start_idx == -1:
             logger.warning_print("未找到 accountTypeDataList_platform_sdk_model")
             return {}
-
+
         brace_count = 0
         in_dict = False
         end_idx = start_idx + len(start_marker) - 1
 
         for i in range(start_idx + len(start_marker) - 1, len(content)):
-            if content[i] == '{':
+            if content[i] == "{":
                 brace_count += 1
                 in_dict = True
-            elif content[i] == '}':
+            elif content[i] == "}":
                 brace_count -= 1
                 if in_dict and brace_count == 0:
                     end_idx = i + 1
                     break
 
-        dict_content = content[start_idx + len("accountTypeDataList_platform_sdk_model"):end_idx].strip()
-        if not dict_content.startswith('='):
+        dict_content = content[
+            start_idx + len("accountTypeDataList_platform_sdk_model") : end_idx
+        ].strip()
+        if not dict_content.startswith("="):
             logger.warning_print("accountTypeDataList_platform_sdk_model 格式错误")
             return {}
         dict_content = dict_content[1:].strip()  # 移除 '='
@@ -240,18 +244,18 @@ class OlivOSAccountAPI:
         end_idx = start_idx + len(start_marker) - 1  # 包含起始的 [
 
         for i in range(start_idx + len(start_marker) - 1, len(content)):
-            if content[i] == '[':
+            if content[i] == "[":
                 bracket_count += 1
                 in_list = True
-            elif content[i] == ']':
+            elif content[i] == "]":
                 bracket_count -= 1
                 if in_list and bracket_count == 0:
                     end_idx = i + 1
                     break
 
         # 提取列表内容
-        list_content = content[start_idx + len("accountTypeDataList_platform"):end_idx].strip()
-        if not list_content.startswith('='):
+        list_content = content[start_idx + len("accountTypeDataList_platform") : end_idx].strip()
+        if not list_content.startswith("="):
             logger.warning_print("accountTypeDataList_platform 格式错误")
             return []
         list_content = list_content[1:].strip()  # 移除 '='
