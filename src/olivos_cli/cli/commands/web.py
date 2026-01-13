@@ -2,7 +2,6 @@
 web 命令实现
 """
 
-import sys
 import webbrowser
 from pathlib import Path
 
