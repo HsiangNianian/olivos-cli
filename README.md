@@ -170,7 +170,7 @@ pip install olivos-cli
 ### 使用 uv 安装（推荐）
 
 ```bash
-uv pip install olivos-cli
+uvx olivos-cli
 ```
 
 ### 从源码安装
