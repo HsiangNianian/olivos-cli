@@ -34,6 +34,7 @@ COMMAND_ALIASES = {
     "co": "checkout",
     "r": "restart",
     "log": "logs",
+    "w": "web",
 }
 
 # 子命令缩写映射
@@ -79,6 +80,7 @@ class OlivOSCLI:
   olivos-cli service start           启动服务
   olivos-cli account add             添加账号
   olivos-cli status                  查看状态
+  olivos-cli web                     启动 WebUI
 
 命令缩写:
   i/init, g/git, p/pkg/package, s/svc/service
@@ -145,6 +147,9 @@ class OlivOSCLI:
 
         # config 命令
         self._add_config_parser(subparsers)
+        
+        # web 命令
+        self._add_web_parser(subparsers)
 
         # logs 命令
         self._add_logs_parser(subparsers)
@@ -297,6 +302,19 @@ class OlivOSCLI:
             "--systemd", action="store_true", help="查看 systemd 日志而非 OlivOS 应用日志"
         )
 
+    def _add_web_parser(self, subparsers):
+        """添加 web 命令"""
+        parser = subparsers.add_parser(
+            "web",
+            aliases=["w"],
+            help="启动 WebUI",
+        )
+        parser.add_argument("--host", default="127.0.0.1", help="监听主机 (默认: 127.0.0.1)")
+        parser.add_argument("--port", type=int, default=8989, help="监听端口 (默认: 8989)")
+        parser.add_argument(
+            "--no-browser", action="store_true", help="不自动打开浏览器"
+        )
+
     def _add_adapter_parser(self, subparsers):
         """添加 adapter 命令"""
         parser = subparsers.add_parser(
@@ -421,6 +439,19 @@ class OlivOSCLI:
         parser.add_argument("--watch", "-w", action="store_true", help="实时监控")
         parser.add_argument("--health", action="store_true", help="健康检查")
 
+    def _add_web_parser(self, subparsers):
+        """添加 web 命令"""
+        parser = subparsers.add_parser(
+            "web",
+            aliases=["w"],
+            help="启动 WebUI",
+        )
+        parser.add_argument("--host", default="127.0.0.1", help="监听主机 (默认: 127.0.0.1)")
+        parser.add_argument("--port", type=int, default=8989, help="监听端口 (默认: 8989)")
+        parser.add_argument(
+            "--no-browser", action="store_true", help="不自动打开浏览器"
+        )
+
     def _add_run_parser(self, subparsers):
         """添加 run 命令"""
         parser = subparsers.add_parser("run", help="直接运行 OlivOS")
@@ -534,6 +565,10 @@ class OlivOSCLI:
             from .commands.update import cmd_update
 
             return cmd_update(self.config_manager, args)
+        elif command == "web":
+            from .commands.web import cmd_web
+
+            return cmd_web(self.config_manager, args)
         else:
             self.parser.print_help()
             return 0
