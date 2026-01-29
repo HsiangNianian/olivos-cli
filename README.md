@@ -132,32 +132,14 @@ classDiagram
 
 ## 特性
 
-- **🚀 一键部署** - 自动克隆 OlivOS 仓库、创建虚拟环境并安装依赖
-- **📦 多包管理器支持** - 支持 uv、pip、pdm、poetry、rye 等主流包管理器
-- **🔧 智能配置** - 从 OlivOS accountMetaData 读取预配置模板，支持 60+ 账号类型
-- **🛡️ systemd 集成** - 自动生成和管理 systemd 用户服务
-- **📊 实时监控** - 日志查看、状态监控、健康检查
-- **🔄 版本管理** - Git 分支切换、更新、镜像源加速
-- **💾 虚拟环境隔离** - 每个实例独立的 Python 环境
+- **一键部署** - 自动克隆 OlivOS 仓库、创建虚拟环境并安装依赖
+- **多包管理器支持** - 支持 uv、pip、pdm、poetry、rye 等主流包管理器
+- **智能配置** - 从 OlivOS accountMetaData 读取预配置模板，支持 60+ 账号类型
+- **systemd 集成** - 自动生成和管理 systemd 用户服务
+- **实时监控** - 日志查看、状态监控、健康检查
+- **版本管理** - Git 分支切换、更新、镜像源加速
+- **虚拟环境隔离** - 每个实例独立的 Python 环境
 
-## 支持的平台
-
-| 平台 | 适配器类型 | 说明 |
-|:-----|:-----------|:-----|
-| **QQ** | onebot, onebot12 | OneBot V11/V12 协议 (NapCat, GoCqHttp, LLOneBot, Lagrange 等) |
-| **QQ 频道** | qqguild, qqguildv2 | QQ 频道开放平台 (公域/私域/沙盒) |
-| **微信** | ComWeChatBot | 微信机器人 |
-| **Telegram** | telegram_poll | Telegram Bot |
-| **Discord** | discord_link | Discord Bot |
-| **KOOK** | kaiheila_link | 开黑啦 |
-| **钉钉** | dingtalk_link | 钉钉机器人 |
-| **米游社** | mhyVila_link | 米游社大别野 |
-| **B站直播** | biliLive_link | B站直播间弹幕 |
-| **DoDo** | dodo_link | DoDo 社区 |
-| **Fanbook** | fanbook_poll | Fanbook |
-| **小黑盒** | xiaoheihe_link | 小黑盒语音 |
-| **Hack.Chat** | hackChat_link | Hack.Chat 聊天协议 |
-| **虚拟终端** | terminal_link | 用于插件调试和测试 |
 
 ## 安装
 
